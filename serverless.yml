@@ -17,7 +17,6 @@ provider:
     VERIFICATION_TOKEN: IEBjAWC4R8YJ8C5gXI3sUDc9
     INSTALL_ERROR_URL: http://forex-khbariuan.s3-website-ap-southeast-1.amazonaws.com/error.html
     INSTALL_SUCCESS_URL: http://forex-khbariuan.s3-website-ap-southeast-1.amazonaws.com/index.html
-    NAMESPACE: ${self:custom.namespace}
     TEAMS_TABLE: ${self:custom.namespace}-teams
   iamRoleStatements:
     - Effect: Allow
@@ -26,8 +25,15 @@ provider:
         - dynamodb:PutItem
       Resource:
         - arn:aws:dynamodb:*:*:table/${self:provider.environment.TEAMS_TABLE}
+    - Effect: Allow
+      Action:
+        - lambda:invokeFunction
+      Resource:
+        - arn:aws:lambda:*:*:function:${self:custom.namespace}-actions
 
 functions:
+  action:
+    handler: actions.handler
   events:
     handler: events.handler
     events:
